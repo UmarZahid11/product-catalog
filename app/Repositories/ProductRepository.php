@@ -13,7 +13,7 @@ class ProductRepository implements ProductRepositoryInterface
     }
 
     public function getProductById($productId) {
-        return new ProductResource(Product::findOrFail($productId));
+        return new ProductResource(Product::find($productId));
     }
         
     public function createProduct(array $productDetails) {
@@ -26,5 +26,9 @@ class ProductRepository implements ProductRepositoryInterface
 
     public function deleteProduct($productId) {
         return Product::destroy($productId);
+    }
+
+    public function attachCategories($product, $category) {
+        $product->categories()->attach($category);
     }
 }

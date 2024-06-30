@@ -9,4 +9,5 @@ interface ProductRepositoryInterface
     public function createProduct(array $productDetails);
     public function updateProduct($productId, array $productDetails);
     public function deleteProduct($productId);
+    public function attachCategories($product, $category);
 }

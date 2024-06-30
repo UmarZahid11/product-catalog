@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Interfaces\ProductRepositoryInterface;
+use App\Interfaces\CategoryRepositoryInterface;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Response;
@@ -16,9 +17,16 @@ class ProductAPIController extends Controller
      */
     private $productRepository;
 
-    public function __construct(ProductRepositoryInterface $productRepository)
+    /**
+     * @var CategoryRepositoryInterface
+     *
+     */
+    private $categoryRepository;
+
+    public function __construct(ProductRepositoryInterface $productRepository, CategoryRepositoryInterface $categoryRepository)
     {
         $this->productRepository = $productRepository;
+        $this->categoryRepository = $categoryRepository;
     }
 
     public function index()
@@ -30,12 +38,17 @@ class ProductAPIController extends Controller
     {
         $product = [];
         $success = false;
-        $error = '';
+        $error = NULL;
         $statusCode = 200;
 
         if($productId) {
             $product = $this->productRepository->getProductById($productId);
-            $success = true;
+            if($product->resource) {
+                $success = true;
+            } else {
+                $success = false;
+                $error = 'Failed to fetch the requested resource.';
+            }
         }
         return response(["success" => $success, "data" => $product, "error" => [$error]], $statusCode);
     }
@@ -92,13 +105,13 @@ class ProductAPIController extends Controller
 
                 $product = $this->productRepository->getProductById($productId);
 
-                if($product) {
+                if($product->resource) {
                     $updated = $this->productRepository->updateProduct($productId, $input);
                     if($updated) {
                         $success = true;
                     }
                 } else {
-                    $error = 'An error occurred while trying to process your request!';
+                    $error = 'Failed to fetch the requested resource.';
                 }
             } else {
                 $error = 'Provide a valid product Id!';
@@ -112,7 +125,6 @@ class ProductAPIController extends Controller
         return response(["success" => $success, "data" => $product, "error" => [$error]], $statusCode);
     }
 
-    // ?_method=DELETE
     public function destroy($productId)
     {
         $product = [];
@@ -125,13 +137,13 @@ class ProductAPIController extends Controller
 
                 $product = $this->productRepository->getProductById($productId);
 
-                if($product) {
+                if($product->resource) {
                     $deleted = $this->productRepository->deleteProduct($productId);
                     if($deleted) {
                         $success = true;
                     }
                 } else {
-                    $error = 'An error occurred while trying to process your request!';
+                    $error = 'Failed to fetch the requested resource.';
                 }
             } else {
                 $error = 'Provide a valid product Id!';
@@ -142,6 +154,45 @@ class ProductAPIController extends Controller
             $error = $e->getMessage();
         }
 
+        return response(["success" => $success, "data" => $product, "error" => [$error]], $statusCode);
+    }
+
+    public function saveProductCategories(Request $request) {
+
+        $product = [];
+        $success = false;
+        $error = '';
+        $statusCode = 200;
+
+        try {
+            $this->validate($request, [
+                'productId' => 'required',
+            ]);
+            $productId = isset($request->productId) ? $request->productId : 0;
+
+            if($productId) {
+                $product = $this->productRepository->getProductById($productId);
+
+                $categories = isset($request->categories) ? $request->categories : [];
+                if($product->resource) {
+                    foreach($categories as $category) {
+                        $fetched_category = $this->categoryRepository->getCategoryById($category);
+                        if($fetched_category->resource) {
+                            $this->productRepository->attachCategories($product, $category);
+                        }
+                    }
+                    $success = true;
+                } else {
+                    $error = 'Failed to fetch the requested resource.';
+                }
+            } else {
+                $error = 'Provide a valid product Id!';
+            }
+        } catch (ValidationException $e) {
+            $error = array_values($e->errors());
+        } catch(\Exception $e) {
+            $error = $e->getMessage();
+        }
         return response(["success" => $success, "data" => $product, "error" => [$error]], $statusCode);
     }
 }

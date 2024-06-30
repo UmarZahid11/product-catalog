@@ -35,7 +35,12 @@ class CategoryAPIController extends Controller
 
         if($categoryId) {
             $category = $this->categoryRepository->getCategoryById($categoryId);
-            $success = true;
+            if($category->resource) {
+                $success = true;
+            } else {
+                $success = false;
+                $error = 'Failed to fetch the requested resource.';
+            }
         }
         return response(["success" => $success, "data" => $category, "error" => [$error]], $statusCode);
     }
@@ -84,13 +89,13 @@ class CategoryAPIController extends Controller
 
                 $category = $this->categoryRepository->getCategoryById($categoryId);
 
-                if($category) {
+                if($category->resource) {
                     $updated = $this->categoryRepository->updateCategory($categoryId, $input);
                     if($updated) {
                         $success = true;
                     }
                 } else {
-                    $error = 'An error occurred while trying to process your request!';
+                    $error = 'Failed to fetch the requested resource.';
                 }
             } else {
                 $error = 'Provide a valid category Id!';
@@ -116,13 +121,13 @@ class CategoryAPIController extends Controller
 
                 $category = $this->categoryRepository->getCategoryById($categoryId);
 
-                if($category) {
+                if($category->resource) {
                     $deleted = $this->categoryRepository->deleteCategory($categoryId);
                     if($deleted) {
                         $success = true;
                     }
                 } else {
-                    $error = 'An error occurred while trying to process your request!';
+                    $error = 'Failed to fetch the requested resource.';
                 }
             } else {
                 $error = 'Provide a valid category Id!';

@@ -13,7 +13,7 @@ class CategoryRepository implements CategoryRepositoryInterface
     }
 
     public function getCategoryById($categoryId) {
-        return new CategoryResource(Category::findOrFail($categoryId));
+        return new CategoryResource(Category::find($categoryId));
     }
         
     public function createCategory(array $productDetails) {

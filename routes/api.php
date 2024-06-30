@@ -22,9 +22,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::resource('products', 'API\ProductAPIController');
 Route::resource('categories', 'API\CategoryAPIController');
 
-
-// Route::get('products', [ProductAPIController::class, 'index']);
-// Route::get('products/{id}', [ProductAPIController::class, 'show']);
-// Route::post('products', [ProductAPIController::class, 'create']);
-// Route::put('products/{id}', [ProductAPIController::class, 'update']);
-// Route::delete('products/{id}', [ProductAPIController::class, 'delete']);
+Route::post('assign-categories', 'API\ProductAPIController@saveProductCategories');

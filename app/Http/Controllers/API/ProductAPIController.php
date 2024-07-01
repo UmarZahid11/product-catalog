@@ -234,6 +234,7 @@ class ProductAPIController extends Controller
                     }
                     if ($available === count($categories)) {
                         $success = true;
+                        $statusCode = 201;
                         $this->productRepository->attachCategories($fetched_product, $categories);
                     } else {
                         $error = 'Failed to fetch one or more requested resource.';
@@ -270,6 +271,11 @@ class ProductAPIController extends Controller
 
             if ($category->resource) {
                 $data = $this->productRepository->getProductByCategoryId($categoryId);
+                if($data->resource) {
+                    $success = true;
+                } else {
+                    $statusCode = 500;
+                }
             } else {
                 $error = 'Failed to fetch the requested resource.';
             }

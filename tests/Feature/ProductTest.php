@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Category;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\Product;
@@ -13,22 +14,23 @@ class ProductTest extends TestCase
     protected Product $product;
 
     protected  function setUp(): void
-    { 
+    {
         parent::setUp();
-        $this->product = Product::factory()->create();
     }
 
     public function testGetProductEndpoint()
     {
+        $product = Product::factory()->create();
+
         // Act
-        $response = $this->get('/api/products/' . $this->product->id);
+        $response = $this->get('/api/products/' . $product->id);
 
         // Assert
         $response->assertStatus(200)
             ->assertJsonStructure(['success', 'data', 'error']);
     }
 
-     /**
+    /**
      * Test storing an API product.
      *
      * @return void
@@ -58,7 +60,7 @@ class ProductTest extends TestCase
         ]);
     }
 
-     /**
+    /**
      * Test updating an API product.
      *
      * @return void
@@ -112,5 +114,46 @@ class ProductTest extends TestCase
         $this->assertDatabaseMissing('products', [
             'id' => $product->id,
         ]);
+    }
+
+    public function testSaveProductCategories() 
+    {
+        $product = Product::factory()->create();
+        $category = Category::factory()->create();
+
+        // Generate new data for creating the product
+        $productCategoryData = [
+            'productId' => $product->id,
+            'categories' => [$category->id]
+        ];
+
+        // Send a POST request to store the product
+        $response = $this->post('/api/assign-categories', $productCategoryData);
+
+        // Assert that the request was successful (status code 201)
+        $response->assertStatus(201);
+
+        // Assert that the product was stored in the database with the provided data
+        $this->assertDatabaseHas('product_category', [
+            'product_id' => $productCategoryData['productId'],
+            'category_id' => $productCategoryData['categories'][0],
+        ]);        
+    }
+
+    public function testFilterProducts()
+    {
+        $category = Category::factory()->create();
+
+        $categoryArray = [
+            'categoryId' => $category->id
+        ];
+
+        // Act
+        $response = $this->post('/api/filter-products/', $categoryArray);
+
+        // Assert
+        $response->assertStatus(200)
+            ->assertJsonStructure(['success', 'data', 'error']);
+        
     }
 }

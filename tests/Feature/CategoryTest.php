@@ -10,25 +10,19 @@ class CategoryTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected Category $category;
-
-    protected  function setUp(): void
-    { 
-        parent::setUp();
-        $this->category = Category::factory()->create();
-    }
-
     public function testGetCategoryEndpoint()
     {
+        $category = Category::factory()->create();
+
         // Act
-        $response = $this->get('/api/categories/' . $this->category->id);
+        $response = $this->get('/api/categories/' . $category->id);
 
         // Assert
         $response->assertStatus(200)
             ->assertJsonStructure(['success', 'data', 'error']);
     }
 
-     /**
+    /**
      * Test storing an API category.
      *
      * @return void
@@ -52,7 +46,7 @@ class CategoryTest extends TestCase
         ]);
     }
 
-     /**
+    /**
      * Test updating an API category.
      *
      * @return void

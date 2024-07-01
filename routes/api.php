@@ -23,3 +23,4 @@ Route::resource('products', 'API\ProductAPIController');
 Route::resource('categories', 'API\CategoryAPIController');
 
 Route::post('assign-categories', 'API\ProductAPIController@saveProductCategories');
+Route::post('filter-products', 'API\ProductAPIController@filterProducts');

@@ -6,6 +6,7 @@ interface ProductRepositoryInterface
 {
     public function getAllProducts();
     public function getProductById($productId);
+    public function getProductByCategoryId($categoryId);
     public function createProduct(array $productDetails);
     public function updateProduct($productId, array $productDetails);
     public function deleteProduct($productId);

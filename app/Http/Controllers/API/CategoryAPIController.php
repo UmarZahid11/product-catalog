@@ -21,35 +21,53 @@ class CategoryAPIController extends Controller
         $this->categoryRepository = $categoryRepository;
     }
 
-    public function index()
+    /**
+     * index
+     *
+     * @return Response
+     */
+    public function index(): Response
     {
-        return response(["success" => true, "data" => $this->categoryRepository->getAllCategories(), "error" => []], 200);
+        return $this->apiResponse(true, $this->categoryRepository->getAllCategories(), "", 200);
     }
 
-    public function show(int $categoryId)
+    /**
+     * show
+     *
+     * @param integer $categoryId
+     * @return Response
+     */
+    public function show(int $categoryId): Response
     {
         $category = [];
         $success = false;
         $error = '';
         $statusCode = 200;
 
-        if($categoryId) {
+        if ($categoryId) {
             try {
                 $category = $this->categoryRepository->getCategoryById($categoryId);
-                if($category->resource) {
+                if ($category->resource) {
                     $success = true;
                 } else {
                     $success = false;
                     $error = 'Failed to fetch the requested resource.';
                 }
-            } catch(\Exception $e) {
+            } catch (\Exception $e) {
                 $error = $e->getMessage();
             }
         }
-        return response(["success" => $success, "data" => $category, "error" => [$error]], $statusCode);
+
+        return $this->apiResponse($success, $category, $error, $statusCode);
     }
 
-    public function store(Request $request)
+    /**
+     * store
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function store(Request $request): Response
     {
         $category = [];
         $success = false;
@@ -71,10 +89,17 @@ class CategoryAPIController extends Controller
             $error = $e->getMessage();
         }
 
-        return response(["success" => $success, "data" => $category, "error" => [$error]], $statusCode);
+        return $this->apiResponse($success, $category, $error, $statusCode);
     }
 
-    public function update(Request $request, int $categoryId)
+    /**
+     * update
+     *
+     * @param Request $request
+     * @param integer $categoryId
+     * @return Response
+     */
+    public function update(Request $request, int $categoryId): Response
     {
         $category = [];
         $success = false;
@@ -86,16 +111,16 @@ class CategoryAPIController extends Controller
         ]);
 
         try {
-            if($categoryId) {
+            if ($categoryId) {
                 $this->validate($request, [
                     'name' => 'required',
                 ]);
 
                 $category = $this->categoryRepository->getCategoryById($categoryId);
 
-                if($category->resource) {
+                if ($category->resource) {
                     $updated = $this->categoryRepository->updateCategory($categoryId, $input);
-                    if($updated) {
+                    if ($updated) {
                         $success = true;
                     }
                 } else {
@@ -110,10 +135,16 @@ class CategoryAPIController extends Controller
             $error = $e->getMessage();
         }
 
-        return response(["success" => $success, "data" => $category, "error" => [$error]], $statusCode);
+        return $this->apiResponse($success, $category, $error, $statusCode);
     }
 
-    public function destroy(int $categoryId)
+    /**
+     * destroy
+     *
+     * @param integer $categoryId
+     * @return Response
+     */
+    public function destroy(int $categoryId): Response
     {
         $category = [];
         $success = false;
@@ -121,13 +152,13 @@ class CategoryAPIController extends Controller
         $statusCode = 200;
 
         try {
-            if($categoryId) {
+            if ($categoryId) {
 
                 $category = $this->categoryRepository->getCategoryById($categoryId);
 
-                if($category->resource) {
+                if ($category->resource) {
                     $deleted = $this->categoryRepository->deleteCategory($categoryId);
-                    if($deleted) {
+                    if ($deleted) {
                         $success = true;
                     }
                 } else {
@@ -136,12 +167,10 @@ class CategoryAPIController extends Controller
             } else {
                 $error = 'Provide a valid category Id!';
             }
-        } catch (ValidationException $e) {
-            $error = array_values($e->errors());
         } catch (\Exception $e) {
             $error = $e->getMessage();
         }
 
-        return response(["success" => $success, "data" => $category, "error" => [$error]], $statusCode);
+        return $this->apiResponse($success, $category, $error, $statusCode);
     }
 }

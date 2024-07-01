@@ -7,8 +7,9 @@ use App\Interfaces\ProductRepositoryInterface;
 use App\Interfaces\CategoryRepositoryInterface;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
-use App\Models\Product;
 use Illuminate\Http\Response;
+use App\Models\Product;
+use App\Models\Category;
 
 class ProductAPIController extends Controller
 {
@@ -30,14 +31,25 @@ class ProductAPIController extends Controller
         $this->categoryRepository = $categoryRepository;
     }
 
+    /**
+     * index
+     *
+     * @return Response
+     */
     public function index(): Response
     {
-        return response(["success" => true, "data" => $this->productRepository->getAllProducts(), "error" => []], 200);
+        return $this->apiResponse(true, $this->productRepository->getAllProducts(), "", 200);
     }
 
+    /**
+     * show
+     *
+     * @param integer $productId
+     * @return Response
+     */
     public function show(int $productId): Response
     {
-        $product = [];
+        $product = NULL;
         $success = false;
         $error = NULL;
         $statusCode = 200;
@@ -55,12 +67,18 @@ class ProductAPIController extends Controller
                 $error = $e->getMessage();
             }
         }
-        return response(["success" => $success, "data" => $product, "error" => [$error]], $statusCode);
+        return $this->apiResponse($success, $product, $error, $statusCode);
     }
 
+    /**
+     * stroe
+     *
+     * @param Request $request
+     * @return Response
+     */
     public function store(Request $request): Response
     {
-        $product = [];
+        $product = NULL;
         $success = false;
         $error = '';
         $statusCode = 200;
@@ -84,12 +102,19 @@ class ProductAPIController extends Controller
             $error = $e->getMessage();
         }
 
-        return response(["success" => $success, "data" => $product, "error" => [$error]], $statusCode);
+        return $this->apiResponse($success, $product, $error, $statusCode);
     }
 
+    /**
+     * update
+     *
+     * @param Request $request
+     * @param integer $productId
+     * @return Response
+     */
     public function update(Request $request, int $productId): Response
     {
-        $product = [];
+        $product = NULL;
         $success = false;
         $error = '';
         $statusCode = 200;
@@ -127,12 +152,18 @@ class ProductAPIController extends Controller
             $error = $e->getMessage();
         }
 
-        return response(["success" => $success, "data" => $product, "error" => [$error]], $statusCode);
+        return $this->apiResponse($success, $product, $error, $statusCode);
     }
 
+    /**
+     * destory
+     *
+     * @param integer $productId
+     * @return Response
+     */
     public function destroy(int $productId): Response
     {
-        $product = [];
+        $product = NULL;
         $success = false;
         $error = '';
         $statusCode = 200;
@@ -153,18 +184,22 @@ class ProductAPIController extends Controller
             } else {
                 $error = 'Provide a valid product Id!';
             }
-        } catch (ValidationException $e) {
-            $error = array_values($e->errors());
         } catch (\Exception $e) {
             $error = $e->getMessage();
         }
 
-        return response(["success" => $success, "data" => $product, "error" => [$error]], $statusCode);
+        return $this->apiResponse($success, $product, $error, $statusCode);
     }
 
+    /**
+     * saveProductCategories
+     *
+     * @param Request $request
+     * @return Response
+     */
     public function saveProductCategories(Request $request): Response
     {
-        $product = [];
+        $product = NULL;
         $success = false;
         $error = '';
         $statusCode = 200;
@@ -205,6 +240,34 @@ class ProductAPIController extends Controller
             $error = $e->getMessage();
         }
 
-        return response(["success" => $success, "data" => [], "error" => [$error]], $statusCode);
+        return $this->apiResponse($success, NULL, $error, $statusCode);
+    }
+
+    function filterProducts(Request $request) : Response {
+        $data = NULL;
+        $success = false;
+        $error = '';
+        $statusCode = 200;
+
+        try {
+            $this->validate($request, [
+                'categoryId' => 'required',
+            ]);
+
+            $categoryId = isset($request->categoryId) ? $request->categoryId : 0;
+            $category = $this->categoryRepository->getCategoryById($categoryId);
+
+            if ($category->resource) {
+                $data = $this->productRepository->getProductByCategoryId($categoryId);
+            } else {
+                $error = 'Failed to fetch the requested resource.';
+            }
+        } catch (ValidationException $e) {
+            $error = array_values($e->errors());
+        } catch (\Exception $e) {
+            $error = $e->getMessage();
+        }
+
+        return $this->apiResponse($success, $data, $error, $statusCode);
     }
 }

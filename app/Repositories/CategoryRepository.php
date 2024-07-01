@@ -5,13 +5,14 @@ namespace App\Repositories;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use App\Models\Category;
 use App\Http\Resources\CategoryResource;
+use App\Http\Resources\CategoryCollection;
 use App\Interfaces\CategoryRepositoryInterface;
 
 class CategoryRepository implements CategoryRepositoryInterface
 {
-    public function getAllCategories(): AnonymousResourceCollection
+    public function getAllCategories(): CategoryCollection
     {
-        return CategoryResource::collection(Category::all());
+        return new CategoryCollection(Category::paginate());
     }
 
     public function getCategoryById($categoryId): CategoryResource
@@ -34,3 +35,4 @@ class CategoryRepository implements CategoryRepositoryInterface
         return Category::destroy($categoryId);
     }
 }
+

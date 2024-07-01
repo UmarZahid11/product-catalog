@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\Category;
-use Illuminate\Validation\ValidationException;
 
 class CategoryTest extends TestCase
 {
@@ -18,11 +17,11 @@ class CategoryTest extends TestCase
         // Act
         $response = $this->get('/api/categories');
 
-        // Assert
+        // Assert that the request was success (status code 200)
         $response->assertStatus(200)
             ->assertJsonStructure(
                 [
-                    'success', 
+                    'success',
                     'data' => [
                         'data' => [
                             '*' => [
@@ -32,9 +31,10 @@ class CategoryTest extends TestCase
                                 'updated_at'
                             ]
                         ]
-                    ], 
+                    ],
                     'errors'
-                ]);
+                ]
+            );
     }
 
     public function testGetCategoryEndpoint()
@@ -44,19 +44,20 @@ class CategoryTest extends TestCase
         // Act
         $response = $this->get('/api/categories/' . $category->id);
 
-        // Assert
+        // Assert that the request was success (status code 200)
         $response->assertStatus(200)
             ->assertJsonStructure(
                 [
-                    'success', 
+                    'success',
                     'data' => [
                         'id',
                         'name',
                         'created_at',
                         'updated_at'
-                    ], 
+                    ],
                     'errors'
-                ]);
+                ]
+            );
     }
 
     /**
@@ -64,12 +65,12 @@ class CategoryTest extends TestCase
      *
      * @return void
      */
-    public function testGetCategoryStoreFail()
+    public function testCategoryStoreFail()
     {
         $categoryData = [
             'name' => NULL,
         ];
-    
+
         // Send a POST request to store the category
         $response = $this->post('/api/categories', $categoryData)->assertInvalid(['name']);
 
@@ -81,11 +82,11 @@ class CategoryTest extends TestCase
     }
 
     /**
-     * Test storing an API category.
+     * Test storing a category.
      *
      * @return void
      */
-    public function testStoreApiCategory()
+    public function testStoreCategory()
     {
         // Generate new data for creating the category
         $categoryData = [
@@ -105,11 +106,11 @@ class CategoryTest extends TestCase
     }
 
     /**
-     * Test updating an API category.
+     * Test updating a category.
      *
      * @return void
      */
-    public function testUpdateApiCategory()
+    public function testUpdateCategory()
     {
         // Create a category
         $category = Category::factory()->create();
@@ -133,11 +134,11 @@ class CategoryTest extends TestCase
     }
 
     /**
-     * Test deleting an API category.
+     * Test deleting a category.
      *
      * @return void
      */
-    public function testDeleteApiCategory()
+    public function testDeleteCategory()
     {
         // Create a category
         $category = Category::factory()->create();

@@ -18,11 +18,11 @@ class ProductTest extends TestCase
         // Act
         $response = $this->get('/api/products');
 
-        // Assert
+        // Assert that the request was success (status code 200)
         $response->assertStatus(200)
             ->assertJsonStructure(
                 [
-                    'success', 
+                    'success',
                     'data' => [
                         'data' => [
                             '*' => [
@@ -35,9 +35,10 @@ class ProductTest extends TestCase
                                 'updated_at'
                             ]
                         ]
-                    ], 
+                    ],
                     'errors'
-                ]);
+                ]
+            );
     }
 
     public function testGetProductEndpoint()
@@ -47,11 +48,11 @@ class ProductTest extends TestCase
         // Act
         $response = $this->get('/api/products/' . $product->id);
 
-        // Assert
+        // Assert that the request was success (status code 200)
         $response->assertStatus(200)
             ->assertJsonStructure(
                 [
-                    'success', 
+                    'success',
                     'data' => [
                         'id',
                         'name',
@@ -60,17 +61,23 @@ class ProductTest extends TestCase
                         'stock',
                         'created_at',
                         'updated_at'
-                    ], 
+                    ],
                     'errors'
-                ]);
+                ]
+            );
     }
 
-    public function testGetProductStoreFail()
+    /**
+     * Test storing product failure
+     *
+     * @return void
+     */
+    public function testProductStoreFail()
     {
         $categoryData = [
             'name' => NULL,
         ];
-    
+
         // Send a POST request to store the category
         $response = $this->post('/api/products', $categoryData)->assertInvalid(['name']);
 
@@ -82,11 +89,11 @@ class ProductTest extends TestCase
     }
 
     /**
-     * Test storing an API product.
+     * Test storing a product.
      *
      * @return void
      */
-    public function testStoreApiProduct()
+    public function testStoreProduct()
     {
         // Generate new data for creating the product
         $productData = [
@@ -112,11 +119,11 @@ class ProductTest extends TestCase
     }
 
     /**
-     * Test updating an API product.
+     * Test updating a product.
      *
      * @return void
      */
-    public function testUpdateApiProduct()
+    public function testUpdateProduct()
     {
         // Create a product
         $product = Product::factory()->create();
@@ -146,11 +153,11 @@ class ProductTest extends TestCase
     }
 
     /**
-     * Test deleting an API product.
+     * Test deleting a product.
      *
      * @return void
      */
-    public function testDeleteApiProduct()
+    public function testDeleteProduct()
     {
         // Create a product
         $product = Product::factory()->create();
@@ -172,7 +179,7 @@ class ProductTest extends TestCase
      *
      * @return void
      */
-    public function testSaveProductCategories() 
+    public function testSaveProductCategories()
     {
         $product = Product::factory()->create();
         $category = Category::factory()->create();
@@ -193,7 +200,7 @@ class ProductTest extends TestCase
         $this->assertDatabaseHas('product_category', [
             'product_id' => $productCategoryData['productId'],
             'category_id' => $productCategoryData['categories'][0],
-        ]);        
+        ]);
     }
 
     /**
@@ -214,6 +221,25 @@ class ProductTest extends TestCase
 
         // Assert
         $response->assertStatus(200)
-            ->assertJsonStructure(['success', 'data', 'errors']);        
+            ->assertJsonStructure(['success', 'data', 'errors']);
+    }
+
+    /**
+     * Test filtering product
+     *
+     * @return void
+     */
+    public function testFilterProductsFailure()
+    {
+        $categoryArray = [
+            'categoryId' => null
+        ];
+
+        // Act
+        $response = $this->post('/api/filter-products/', $categoryArray)->assertInvalid(['categoryId']);;
+
+        // Assert
+        $response->assertStatus(200)
+            ->assertJsonStructure(['success', 'data', 'errors']);
     }
 }

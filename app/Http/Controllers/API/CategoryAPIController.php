@@ -16,8 +16,9 @@ class CategoryAPIController extends Controller
      */
     private $categoryRepository;
 
-    public function __construct(CategoryRepositoryInterface $categoryRepository)
-    {
+    public function __construct(
+        CategoryRepositoryInterface $categoryRepository
+    ) {
         $this->categoryRepository = $categoryRepository;
     }
 
@@ -39,7 +40,7 @@ class CategoryAPIController extends Controller
      */
     public function show(int $categoryId): Response
     {
-        $category = [];
+        $category = NULL;
         $success = false;
         $error = '';
         $statusCode = 200;
@@ -69,7 +70,7 @@ class CategoryAPIController extends Controller
      */
     public function store(Request $request): Response
     {
-        $category = [];
+        $category = NULL;
         $success = false;
         $error = '';
         $statusCode = 200;
@@ -81,8 +82,11 @@ class CategoryAPIController extends Controller
             $this->validate($request, [
                 'name' => 'required',
             ]);
-            $success = true;
             $category = $this->categoryRepository->createCategory($input);
+            if($category) {
+                $success = true;
+                $statusCode = 201;
+            }
         } catch (ValidationException $e) {
             $error = array_values($e->errors());
         } catch (\Exception $e) {
@@ -101,7 +105,7 @@ class CategoryAPIController extends Controller
      */
     public function update(Request $request, int $categoryId): Response
     {
-        $category = [];
+        $category = NULL;
         $success = false;
         $error = '';
         $statusCode = 200;
@@ -147,7 +151,7 @@ class CategoryAPIController extends Controller
      */
     public function destroy(int $categoryId): Response
     {
-        $category = [];
+        $category = NULL;
         $success = false;
         $error = '';
         $statusCode = 200;
@@ -161,6 +165,7 @@ class CategoryAPIController extends Controller
                     $deleted = $this->categoryRepository->deleteCategory($categoryId);
                     if ($deleted) {
                         $success = true;
+                        $statusCode = 204;
                     }
                 } else {
                     $error = 'Failed to fetch the requested resource.';

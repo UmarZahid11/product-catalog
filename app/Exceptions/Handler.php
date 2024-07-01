@@ -51,15 +51,15 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
-        // if ($exception instanceof MethodNotAllowedHttpException) {
-        //     return response(["success" => false, "data" => [], "error" => []], 401);
-        // }
-        // if ($exception instanceof \BadMethodCallException) {
-        //     return response(["success" => false, "data" => [], "error" => []], 404);
-        // }
-        // if ($exception instanceof \TypeError) {
-        //     return response(["success" => false, "data" => [], "error" => []], 500);
-        // }
+        if ($exception instanceof MethodNotAllowedHttpException) {
+            return response(["success" => false, "data" => [], "error" => []], 401);
+        }
+        if ($exception instanceof \BadMethodCallException) {
+            return response(["success" => false, "data" => [], "error" => []], 404);
+        }
+        if ($exception instanceof \TypeError) {
+            return response(["success" => false, "data" => [], "error" => []], 500);
+        }
         return parent::render($request, $exception);
     }
 }

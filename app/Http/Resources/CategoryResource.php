@@ -1,10 +1,10 @@
 <?php
- 
+
 namespace App\Http\Resources;
- 
+
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
- 
+
 class CategoryResource extends JsonResource
 {
     /**
@@ -13,7 +13,7 @@ class CategoryResource extends JsonResource
      * @var bool
      */
     public $preserveKeys = true;
-    
+
     /**
      * Transform the resource into an array.
      *
@@ -22,13 +22,14 @@ class CategoryResource extends JsonResource
      */
     public function toArray($request)
     {
-        if(isset($this->id)) {
+        if (isset($this->id)) {
             return [
                 'id' => $this->id,
                 'name' => $this->name,
                 'created_at' => $this->created_at,
                 'updated_at' => $this->updated_at,
             ];
-        } return [];
+        }
+        return [];
     }
 }

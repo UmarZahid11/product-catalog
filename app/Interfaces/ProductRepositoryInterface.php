@@ -2,7 +2,7 @@
 
 namespace App\Interfaces;
 
-interface ProductRepositoryInterface 
+interface ProductRepositoryInterface
 {
     public function getAllProducts();
     public function getProductById($productId);

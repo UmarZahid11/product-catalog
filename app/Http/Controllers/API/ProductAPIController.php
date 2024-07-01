@@ -25,8 +25,10 @@ class ProductAPIController extends Controller
      */
     private $categoryRepository;
 
-    public function __construct(ProductRepositoryInterface $productRepository, CategoryRepositoryInterface $categoryRepository)
-    {
+    public function __construct(
+        ProductRepositoryInterface $productRepository,
+        CategoryRepositoryInterface $categoryRepository
+    ) {
         $this->productRepository = $productRepository;
         $this->categoryRepository = $categoryRepository;
     }
@@ -86,16 +88,21 @@ class ProductAPIController extends Controller
         $input = $request->only([
             'name',
             'price',
-            'stock'
+            'stock',
+            'description'
         ]);
+
         try {
             $this->validate($request, [
                 'name' => 'required',
                 'price' => 'required',
                 'stock' => 'required',
             ]);
-            $success = true;
             $product = $this->productRepository->createProduct($input);
+            if($product) {
+                $success = true;
+                $statusCode = 201;
+            }
         } catch (ValidationException $e) {
             $error = array_values($e->errors());
         } catch (\Exception $e) {
@@ -122,7 +129,8 @@ class ProductAPIController extends Controller
         $input = $request->only([
             'name',
             'price',
-            'stock'
+            'stock',
+            'description'
         ]);
 
         try {
@@ -178,6 +186,7 @@ class ProductAPIController extends Controller
                     $deleted = $this->productRepository->deleteProduct($productId);
                     if ($deleted) {
                         $success = true;
+                        $statusCode = 204;
                     }
                 } else {
                     $error = 'Failed to fetch the requested resource.';
@@ -244,7 +253,8 @@ class ProductAPIController extends Controller
         return $this->apiResponse($success, NULL, $error, $statusCode);
     }
 
-    function filterProducts(Request $request) : Response {
+    function filterProducts(Request $request): Response
+    {
         $data = NULL;
         $success = false;
         $error = '';

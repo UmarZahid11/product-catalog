@@ -26,7 +26,7 @@ class CategoryAPIController extends Controller
         return response(["success" => true, "data" => $this->categoryRepository->getAllCategories(), "error" => []], 200);
     }
 
-    public function show($categoryId)
+    public function show(int $categoryId)
     {
         $category = [];
         $success = false;
@@ -34,12 +34,16 @@ class CategoryAPIController extends Controller
         $statusCode = 200;
 
         if($categoryId) {
-            $category = $this->categoryRepository->getCategoryById($categoryId);
-            if($category->resource) {
-                $success = true;
-            } else {
-                $success = false;
-                $error = 'Failed to fetch the requested resource.';
+            try {
+                $category = $this->categoryRepository->getCategoryById($categoryId);
+                if($category->resource) {
+                    $success = true;
+                } else {
+                    $success = false;
+                    $error = 'Failed to fetch the requested resource.';
+                }
+            } catch(\Exception $e) {
+                $error = $e->getMessage();
             }
         }
         return response(["success" => $success, "data" => $category, "error" => [$error]], $statusCode);
@@ -70,7 +74,7 @@ class CategoryAPIController extends Controller
         return response(["success" => $success, "data" => $category, "error" => [$error]], $statusCode);
     }
 
-    public function update(Request $request, $categoryId)
+    public function update(Request $request, int $categoryId)
     {
         $category = [];
         $success = false;
@@ -109,7 +113,7 @@ class CategoryAPIController extends Controller
         return response(["success" => $success, "data" => $category, "error" => [$error]], $statusCode);
     }
 
-    public function destroy($categoryId)
+    public function destroy(int $categoryId)
     {
         $category = [];
         $success = false;

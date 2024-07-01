@@ -57,6 +57,9 @@ class Handler extends ExceptionHandler
         if ($exception instanceof \BadMethodCallException) {
             return response(["success" => false, "data" => [], "error" => []], 404);
         }
+        if ($exception instanceof \TypeError) {
+            return response(["success" => false, "data" => [], "error" => []], 500);
+        }
         return parent::render($request, $exception);
     }
 }

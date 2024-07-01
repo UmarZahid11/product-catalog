@@ -20,7 +20,7 @@ class CategoryRepository implements CategoryRepositoryInterface
         return new CategoryResource(Category::find($categoryId));
     }
 
-    public function createCategory(array $productDetails): int
+    public function createCategory(array $productDetails): object
     {
         return Category::create($productDetails);
     }

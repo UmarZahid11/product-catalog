@@ -24,7 +24,7 @@ class CategoryCollection extends ResourceCollection
 
             $this->links = [
                 'first' => $resource->path() . '?page=1',
-                'last' => $resource->path() . '?page=' . $resource->total(),
+                'last' => $resource->path() . '?page=' . $resource->lastPage(),
             ];
 
             $this->meta = [

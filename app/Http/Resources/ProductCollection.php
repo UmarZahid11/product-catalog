@@ -23,7 +23,7 @@ class ProductCollection extends ResourceCollection
         if ($resource) {
             $this->links = [
                 'first' => $resource->path() . '?page=1',
-                'last' => $resource->path() . '?page=' . $resource->total(),
+                'last' => $resource->path() . '?page=' . $resource->lastPage(),
             ];
 
             $this->meta = [

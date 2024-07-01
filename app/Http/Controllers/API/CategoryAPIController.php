@@ -121,6 +121,7 @@ class CategoryAPIController extends Controller
                 if ($category->resource) {
                     $updated = $this->categoryRepository->updateCategory($categoryId, $input);
                     if ($updated) {
+                        $category = $this->categoryRepository->getCategoryById($categoryId);
                         $success = true;
                     }
                 } else {

@@ -28,7 +28,7 @@ class ProductRepository implements ProductRepositoryInterface
         return new ProductCollection($product);
     }
 
-    public function createProduct(array $productDetails): int
+    public function createProduct(array $productDetails): object
     {
         return Product::create($productDetails);
     }

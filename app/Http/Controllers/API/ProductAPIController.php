@@ -138,6 +138,7 @@ class ProductAPIController extends Controller
                 if ($product->resource) {
                     $updated = $this->productRepository->updateProduct($productId, $input);
                     if ($updated) {
+                        $product = $this->productRepository->getProductById($productId);
                         $success = true;
                     }
                 } else {

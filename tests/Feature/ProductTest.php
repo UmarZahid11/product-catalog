@@ -11,6 +11,35 @@ class ProductTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function testGetAllProductsEndpoint()
+    {
+        Product::factory()->create();
+
+        // Act
+        $response = $this->get('/api/products');
+
+        // Assert
+        $response->assertStatus(200)
+            ->assertJsonStructure(
+                [
+                    'success', 
+                    'data' => [
+                        'data' => [
+                            '*' => [
+                                'id',
+                                'name',
+                                'description',
+                                'price',
+                                'stock',
+                                'created_at',
+                                'updated_at'
+                            ]
+                        ]
+                    ], 
+                    'error'
+                ]);
+    }
+
     public function testGetProductEndpoint()
     {
         $product = Product::factory()->create();
@@ -20,7 +49,20 @@ class ProductTest extends TestCase
 
         // Assert
         $response->assertStatus(200)
-            ->assertJsonStructure(['success', 'data', 'error']);
+            ->assertJsonStructure(
+                [
+                    'success', 
+                    'data' => [
+                        'id',
+                        'name',
+                        'description',
+                        'price',
+                        'stock',
+                        'created_at',
+                        'updated_at'
+                    ], 
+                    'error'
+                ]);
     }
 
     /**

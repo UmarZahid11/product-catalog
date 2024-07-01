@@ -14,6 +14,6 @@ class Controller extends BaseController
 
     protected function apiResponse(bool $success, ?object $data, $error, int $statusCode): Response
     {
-        return response(["success" => $success, "data" => $data, "error" => [$error]], $statusCode);
+        return response(["success" => $success, "data" => $data, "errors" => $error], $statusCode);
     }
 }

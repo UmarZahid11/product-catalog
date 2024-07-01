@@ -62,7 +62,7 @@ class ProductAPIController extends Controller
                 if ($product->resource) {
                     $success = true;
                 } else {
-                    $success = false;
+                    $statusCode = 400;
                     $error = 'Failed to fetch the requested resource.';
                 }
             } catch (\Exception $e) {
@@ -83,7 +83,7 @@ class ProductAPIController extends Controller
         $product = NULL;
         $success = false;
         $error = '';
-        $statusCode = 200;
+        $statusCode = 500;
 
         $input = $request->only([
             'name',
@@ -104,7 +104,7 @@ class ProductAPIController extends Controller
                 $statusCode = 201;
             }
         } catch (ValidationException $e) {
-            $error = array_values($e->errors());
+            $error = [array_key_first($e->errors()) => ($e->errors()[array_key_first($e->errors())])];
         } catch (\Exception $e) {
             $error = $e->getMessage();
         }
@@ -156,7 +156,7 @@ class ProductAPIController extends Controller
                 $error = 'Provide a valid product Id!';
             }
         } catch (ValidationException $e) {
-            $error = array_values($e->errors());
+            $error = [array_key_first($e->errors()) => ($e->errors()[array_key_first($e->errors())])];
         } catch (\Exception $e) {
             $error = $e->getMessage();
         }
@@ -246,7 +246,7 @@ class ProductAPIController extends Controller
                 $error = 'Provide a valid product Id!';
             }
         } catch (ValidationException $e) {
-            $error = array_values($e->errors());
+            $error = [array_key_first($e->errors()) => ($e->errors()[array_key_first($e->errors())])];
         } catch (\Exception $e) {
             $error = $e->getMessage();
         }
@@ -280,7 +280,7 @@ class ProductAPIController extends Controller
                 $error = 'Failed to fetch the requested resource.';
             }
         } catch (ValidationException $e) {
-            $error = array_values($e->errors());
+            $error = [array_key_first($e->errors()) => ($e->errors()[array_key_first($e->errors())])];
         } catch (\Exception $e) {
             $error = $e->getMessage();
         }

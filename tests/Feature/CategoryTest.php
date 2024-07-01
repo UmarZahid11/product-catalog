@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\Category;
+use Illuminate\Validation\ValidationException;
 
 class CategoryTest extends TestCase
 {
@@ -32,7 +33,7 @@ class CategoryTest extends TestCase
                             ]
                         ]
                     ], 
-                    'error'
+                    'errors'
                 ]);
     }
 
@@ -54,8 +55,29 @@ class CategoryTest extends TestCase
                         'created_at',
                         'updated_at'
                     ], 
-                    'error'
+                    'errors'
                 ]);
+    }
+
+    /**
+     * Test storing category failure
+     *
+     * @return void
+     */
+    public function testGetCategoryStoreFail()
+    {
+        $categoryData = [
+            'name' => NULL,
+        ];
+    
+        // Send a POST request to store the category
+        $response = $this->post('/api/categories', $categoryData)->assertInvalid(['name']);
+
+        // Assert that the request was failed (status code 500)
+        $response->assertStatus(500);
+
+        //
+        $this->assertEquals(0, Category::count());
     }
 
     /**

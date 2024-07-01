@@ -36,7 +36,7 @@ class ProductTest extends TestCase
                             ]
                         ]
                     ], 
-                    'error'
+                    'errors'
                 ]);
     }
 
@@ -61,8 +61,24 @@ class ProductTest extends TestCase
                         'created_at',
                         'updated_at'
                     ], 
-                    'error'
+                    'errors'
                 ]);
+    }
+
+    public function testGetProductStoreFail()
+    {
+        $categoryData = [
+            'name' => NULL,
+        ];
+    
+        // Send a POST request to store the category
+        $response = $this->post('/api/products', $categoryData)->assertInvalid(['name']);
+
+        // Assert that the request was failed (status code 500)
+        $response->assertStatus(500);
+
+        //
+        $this->assertEquals(0, Category::count());
     }
 
     /**
@@ -198,6 +214,6 @@ class ProductTest extends TestCase
 
         // Assert
         $response->assertStatus(200)
-            ->assertJsonStructure(['success', 'data', 'error']);        
+            ->assertJsonStructure(['success', 'data', 'errors']);        
     }
 }

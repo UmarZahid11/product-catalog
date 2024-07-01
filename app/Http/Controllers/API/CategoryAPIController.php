@@ -51,7 +51,7 @@ class CategoryAPIController extends Controller
                 if ($category->resource) {
                     $success = true;
                 } else {
-                    $success = false;
+                    $statusCode = 400;
                     $error = 'Failed to fetch the requested resource.';
                 }
             } catch (\Exception $e) {
@@ -73,7 +73,7 @@ class CategoryAPIController extends Controller
         $category = NULL;
         $success = false;
         $error = '';
-        $statusCode = 200;
+        $statusCode = 500;
 
         $input = $request->only([
             'name',
@@ -88,7 +88,7 @@ class CategoryAPIController extends Controller
                 $statusCode = 201;
             }
         } catch (ValidationException $e) {
-            $error = array_values($e->errors());
+            $error = [array_key_first($e->errors()) => ($e->errors()[array_key_first($e->errors())])];
         } catch (\Exception $e) {
             $error = $e->getMessage();
         }
@@ -135,7 +135,7 @@ class CategoryAPIController extends Controller
                 $error = 'Provide a valid category Id!';
             }
         } catch (ValidationException $e) {
-            $error = array_values($e->errors());
+            $error = [array_key_first($e->errors()) => ($e->errors()[array_key_first($e->errors())])];
         } catch (\Exception $e) {
             $error = $e->getMessage();
         }

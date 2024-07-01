@@ -62,7 +62,7 @@ class ProductAPIController extends Controller
                 if ($product->resource) {
                     $success = true;
                 } else {
-                    $statusCode = 400;
+                    $statusCode = 404;
                     $error = 'Failed to fetch the requested resource.';
                 }
             } catch (\Exception $e) {
@@ -83,7 +83,7 @@ class ProductAPIController extends Controller
         $product = NULL;
         $success = false;
         $error = '';
-        $statusCode = 500;
+        $statusCode = 400;
 
         $input = $request->only([
             'name',
@@ -124,7 +124,7 @@ class ProductAPIController extends Controller
         $product = NULL;
         $success = false;
         $error = '';
-        $statusCode = 200;
+        $statusCode = 400;
 
         $input = $request->only([
             'name',
@@ -148,6 +148,7 @@ class ProductAPIController extends Controller
                     if ($updated) {
                         $product = $this->productRepository->getProductById($productId);
                         $success = true;
+                        $statusCode = 200;
                     }
                 } else {
                     $error = 'Failed to fetch the requested resource.';
@@ -186,7 +187,7 @@ class ProductAPIController extends Controller
                     $deleted = $this->productRepository->deleteProduct($productId);
                     if ($deleted) {
                         $success = true;
-                        $statusCode = 204;
+                        $statusCode = 200;
                     }
                 } else {
                     $error = 'Failed to fetch the requested resource.';
@@ -198,7 +199,7 @@ class ProductAPIController extends Controller
             $error = $e->getMessage();
         }
 
-        return $this->apiResponse($success, $product, $error, $statusCode);
+        return $this->apiResponse($success, NULL, $error, $statusCode);
     }
 
     /**
@@ -259,7 +260,7 @@ class ProductAPIController extends Controller
         $data = NULL;
         $success = false;
         $error = '';
-        $statusCode = 200;
+        $statusCode = 400;
 
         try {
             $this->validate($request, [
@@ -273,8 +274,7 @@ class ProductAPIController extends Controller
                 $data = $this->productRepository->getProductByCategoryId($categoryId);
                 if($data->resource) {
                     $success = true;
-                } else {
-                    $statusCode = 500;
+                    $statusCode = 200;
                 }
             } else {
                 $error = 'Failed to fetch the requested resource.';

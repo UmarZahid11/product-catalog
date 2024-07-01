@@ -11,6 +11,11 @@ class ProductTest extends TestCase
 {
     use RefreshDatabase;
 
+    /**
+     * Test Get all products
+     *
+     * @return void
+     */
     public function testGetAllProductsEndpoint()
     {
         Product::factory()->create();
@@ -41,6 +46,11 @@ class ProductTest extends TestCase
             );
     }
 
+    /**
+     * Test Get product
+     *
+     * @return void
+     */
     public function testGetProductEndpoint()
     {
         $product = Product::factory()->create();
@@ -74,18 +84,18 @@ class ProductTest extends TestCase
      */
     public function testProductStoreFail()
     {
-        $categoryData = [
+        $productData = [
             'name' => NULL,
         ];
 
-        // Send a POST request to store the category
-        $response = $this->post('/api/products', $categoryData)->assertInvalid(['name']);
+        // Send a POST request to store the product
+        $response = $this->post('/api/products', $productData)->assertInvalid(['name']);
 
         // Assert that the request was failed (status code 500)
-        $response->assertStatus(500);
+        $response->assertStatus(400);
 
         //
-        $this->assertEquals(0, Category::count());
+        $this->assertEquals(0, Product::count());
     }
 
     /**
@@ -166,7 +176,7 @@ class ProductTest extends TestCase
         $response = $this->delete('/api/products/' . $product->id);
 
         // Assert that the request was successful (status code 204)
-        $response->assertStatus(204);
+        $response->assertStatus(200);
 
         // Assert that the product no longer exists in the database
         $this->assertDatabaseMissing('products', [
@@ -239,7 +249,25 @@ class ProductTest extends TestCase
         $response = $this->post('/api/filter-products/', $categoryArray)->assertInvalid(['categoryId']);;
 
         // Assert
-        $response->assertStatus(200)
+        $response->assertStatus(400)
             ->assertJsonStructure(['success', 'data', 'errors']);
+    }
+
+    /**
+     * test product and category relation
+     *
+     * @return void
+     */
+    function testProductCategoryRelation()
+    {
+        $product = Product::factory()->create();
+        $category = Category::factory()->create();
+
+        $this->assertCount(0, $product->fresh()->categories);
+
+        $product->categories()->attach($category);
+
+        $this->assertTrue($product->categories()->first()->is($category));
+        $this->assertCount(1, $product->fresh()->categories);
     }
 }

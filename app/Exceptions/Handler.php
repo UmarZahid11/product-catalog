@@ -52,7 +52,7 @@ class Handler extends ExceptionHandler
     public function render($request, Throwable $exception)
     {
         if ($exception instanceof MethodNotAllowedHttpException) {
-            return response(["success" => false, "data" => [], "error" => []], 401);
+            return response(["success" => false, "data" => [], "error" => []], 500);
         }
         if ($exception instanceof \BadMethodCallException) {
             return response(["success" => false, "data" => [], "error" => []], 404);

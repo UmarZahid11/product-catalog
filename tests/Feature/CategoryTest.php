@@ -10,6 +10,11 @@ class CategoryTest extends TestCase
 {
     use RefreshDatabase;
 
+    /**
+     * Test get all categories
+     *
+     * @return void
+     */
     public function testGetAllCategoriesEndpoint()
     {
         Category::factory()->create();
@@ -37,6 +42,11 @@ class CategoryTest extends TestCase
             );
     }
 
+    /**
+     * Test get category
+     *
+     * @return void
+     */
     public function testGetCategoryEndpoint()
     {
         $category = Category::factory()->create();
@@ -74,8 +84,8 @@ class CategoryTest extends TestCase
         // Send a POST request to store the category
         $response = $this->post('/api/categories', $categoryData)->assertInvalid(['name']);
 
-        // Assert that the request was failed (status code 500)
-        $response->assertStatus(500);
+        // Assert that the request was failed (status code 400)
+        $response->assertStatus(400);
 
         //
         $this->assertEquals(0, Category::count());
@@ -147,7 +157,7 @@ class CategoryTest extends TestCase
         $response = $this->delete('/api/categories/' . $category->id);
 
         // Assert that the request was successful (status code 204)
-        $response->assertStatus(204);
+        $response->assertStatus(200);
 
         // Assert that the category no longer exists in the database
         $this->assertDatabaseMissing('categories', [

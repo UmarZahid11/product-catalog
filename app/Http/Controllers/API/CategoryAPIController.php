@@ -51,7 +51,7 @@ class CategoryAPIController extends Controller
                 if ($category->resource) {
                     $success = true;
                 } else {
-                    $statusCode = 400;
+                    $statusCode = 404;
                     $error = 'Failed to fetch the requested resource.';
                 }
             } catch (\Exception $e) {
@@ -73,7 +73,7 @@ class CategoryAPIController extends Controller
         $category = NULL;
         $success = false;
         $error = '';
-        $statusCode = 500;
+        $statusCode = 400;
 
         $input = $request->only([
             'name',
@@ -108,7 +108,7 @@ class CategoryAPIController extends Controller
         $category = NULL;
         $success = false;
         $error = '';
-        $statusCode = 200;
+        $statusCode = 400;
 
         $input = $request->only([
             'name',
@@ -127,6 +127,7 @@ class CategoryAPIController extends Controller
                     if ($updated) {
                         $category = $this->categoryRepository->getCategoryById($categoryId);
                         $success = true;
+                        $statusCode = 200;
                     }
                 } else {
                     $error = 'Failed to fetch the requested resource.';
@@ -165,7 +166,7 @@ class CategoryAPIController extends Controller
                     $deleted = $this->categoryRepository->deleteCategory($categoryId);
                     if ($deleted) {
                         $success = true;
-                        $statusCode = 204;
+                        $statusCode = 200;
                     }
                 } else {
                     $error = 'Failed to fetch the requested resource.';
@@ -177,6 +178,6 @@ class CategoryAPIController extends Controller
             $error = $e->getMessage();
         }
 
-        return $this->apiResponse($success, $category, $error, $statusCode);
+        return $this->apiResponse($success, NULL, $error, $statusCode);
     }
 }

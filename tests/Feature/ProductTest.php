@@ -2,21 +2,14 @@
 
 namespace Tests\Feature;
 
-use App\Models\Category;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Models\Category;
 use App\Models\Product;
 
 class ProductTest extends TestCase
 {
     use RefreshDatabase;
-
-    protected Product $product;
-
-    protected  function setUp(): void
-    {
-        parent::setUp();
-    }
 
     public function testGetProductEndpoint()
     {
@@ -116,6 +109,11 @@ class ProductTest extends TestCase
         ]);
     }
 
+    /**
+     * Test saving categories against product
+     *
+     * @return void
+     */
     public function testSaveProductCategories() 
     {
         $product = Product::factory()->create();
@@ -140,6 +138,11 @@ class ProductTest extends TestCase
         ]);        
     }
 
+    /**
+     * Test filtering product
+     *
+     * @return void
+     */
     public function testFilterProducts()
     {
         $category = Category::factory()->create();
@@ -153,7 +156,6 @@ class ProductTest extends TestCase
 
         // Assert
         $response->assertStatus(200)
-            ->assertJsonStructure(['success', 'data', 'error']);
-        
+            ->assertJsonStructure(['success', 'data', 'error']);        
     }
 }

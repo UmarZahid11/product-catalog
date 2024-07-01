@@ -22,9 +22,11 @@ class ProductRepository implements ProductRepositoryInterface
 
     public function getProductByCategoryId($categoryId): ProductCollection
     {
-        $product = Product::with(['categories' => function ($query) use ($categoryId) {
+        $product = Product::whereHas('categories', function ($query) use ($categoryId) {
             return $query->where('category_id', $categoryId);
-        }])->paginate();
+        })
+        ->with('categories')
+        ->paginate();
         return new ProductCollection($product);
     }
 
